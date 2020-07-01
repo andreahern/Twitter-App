@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -66,6 +67,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         TextView tvDate;
         ImageView ivMedia;
+        ImageView ivReply;
+        ImageView ivRetweet;
+        ImageView ivFavorite;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -74,6 +78,33 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvDate = itemView.findViewById(R.id.tvDate);
             ivMedia = itemView.findViewById(R.id.ivMedia);
+            ivReply = itemView.findViewById(R.id.ivReply);
+            ivRetweet = itemView.findViewById(R.id.ivRetweet);
+            ivFavorite = itemView.findViewById(R.id.ivFavorite);
+
+            ivReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "Reply CLicked!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            ivRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "Retweet CLicked!", Toast.LENGTH_SHORT).show();
+                    Glide.with(context).load(R.drawable.ic_vector_retweet).into(ivRetweet);
+                }
+            });
+
+            ivFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context, "Favorite CLicked!", Toast.LENGTH_SHORT).show();
+                    Glide.with(context).load(R.drawable.ic_vector_heart).into(ivFavorite);
+                }
+            });
+
             itemView.setOnClickListener(this);
         }
 
@@ -90,6 +121,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivMedia.setVisibility(View.GONE);
             }
         }
+
 
         @Override
         public void onClick(View view) {
