@@ -23,6 +23,9 @@ public class Tweet {
     public String relativeDate;
     public String media;
     public long id;
+    public boolean favorited;
+    public boolean retweeted;
+
     public User user;
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
@@ -32,7 +35,8 @@ public class Tweet {
         tweet.relativeDate = getRelativeTimeAgo(tweet.createdAt);
         tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-
+        tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
         if(jsonObject.has("extended_entities")){
             String type = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type");
             if(type.equals("photo")){
@@ -52,7 +56,7 @@ public class Tweet {
         return tweets;
     }
 
-    private static String getRelativeTimeAgo(String rawJsonDate) {
+    public static String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
