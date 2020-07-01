@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -37,16 +38,21 @@ public class TweetDetailsActivity extends AppCompatActivity {
     Tweet tweet;
     long id;
 
+    ActivityTweetDetailsBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_details);
-        ivProfileImage = findViewById(R.id.ivProfileImage);
-        tvBody = findViewById(R.id.tvBody);
-        tvScreenName = findViewById(R.id.tvScreenName);
-        ivMedia = findViewById(R.id.ivMedia);
-        btnFavorite = findViewById(R.id.btnFavorite);
-        btnRetweet = findViewById(R.id.btnRetweet);
+        binding = ActivityTweetDetailsBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        ivProfileImage = binding.ivProfileImage;
+        tvBody = binding.tvBody;
+        tvScreenName = binding.tvScreenName;
+        ivMedia = binding.ivMedia;
+        btnFavorite = binding.btnFavorite;
+        btnRetweet = binding.btnRetweet;
         id = getIntent().getLongExtra("id", 0);
         client = TwitterApp.getRestClient(this);
 
@@ -172,7 +178,6 @@ public class TweetDetailsActivity extends AppCompatActivity {
                     Log.e(TAG, "Json Exception: ", e);
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onFailure onFavorite: ", throwable);

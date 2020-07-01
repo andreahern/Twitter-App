@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -37,6 +39,7 @@ public class TimelineActivity extends AppCompatActivity {
     TweetsAdapter adapter;
     SwipeRefreshLayout swipeContainer;
     EndlessRecyclerViewScrollListener scrollListener;
+    ActivityTimelineBinding binding;
 
     private static final String TAG = "TimelineActivity";
     public static final int REQUEST_CODE = 20;
@@ -44,10 +47,12 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        binding = ActivityTimelineBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         client = TwitterApp.getRestClient(this);
-        swipeContainer = findViewById(R.id.swipeContainer);
+        swipeContainer = binding.swipeContainer;
 
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -63,7 +68,7 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        rvTweets = findViewById(R.id.rvTweets);
+        rvTweets = binding.rvTweets;
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -151,7 +156,6 @@ public class TimelineActivity extends AppCompatActivity {
                     Log.e(TAG, "Json exception: ", e);
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e(TAG, "onFailure! " + response, throwable);

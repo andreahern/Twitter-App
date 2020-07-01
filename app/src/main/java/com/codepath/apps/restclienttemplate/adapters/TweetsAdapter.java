@@ -20,6 +20,7 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetDetailsActivity;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -35,7 +36,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     Context context;
     List<Tweet> tweets;
     TwitterClient client;
-
+    ItemTweetBinding binding;
 
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
@@ -45,8 +46,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_tweet, parent, false);
         client = TwitterApp.getRestClient(context);
+        LayoutInflater inflator = LayoutInflater.from(context);
+        binding = ItemTweetBinding.inflate(inflator, parent, false);
+        View view = binding.getRoot();
         return new ViewHolder(view);
     }
 
@@ -85,16 +88,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            tvBody = itemView.findViewById(R.id.tvBody);
-            tvScreenName = itemView.findViewById(R.id.tvScreenName);
-            tvDate = itemView.findViewById(R.id.tvDate);
-            ivMedia = itemView.findViewById(R.id.ivMedia);
-            ivReply = itemView.findViewById(R.id.ivReply);
-            ivRetweet = itemView.findViewById(R.id.ivRetweet);
-            ivFavorite = itemView.findViewById(R.id.ivFavorite);
-            tvFavoriteCount = itemView.findViewById(R.id.tvFavoriteCount);
-            tvRetweetCount = itemView.findViewById(R.id.tvRetweetCount);
+            ivProfileImage = binding.ivProfileImage;
+            tvBody = binding.tvBody;
+            tvScreenName = binding.tvScreenName;
+            tvDate = binding.tvDate;
+            ivMedia = binding.ivMedia;
+            ivReply = binding.ivReply;
+            ivRetweet = binding.ivRetweet;
+            ivFavorite = binding.ivFavorite;
+            tvFavoriteCount = binding.tvFavoriteCount;
+            tvRetweetCount = binding.tvRetweetCount;
             itemView.setOnClickListener(this);
         }
 
@@ -236,5 +239,4 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         }
     }
-
 }

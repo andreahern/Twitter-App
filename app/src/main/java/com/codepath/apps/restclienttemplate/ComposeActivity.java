@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityComposeBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -32,7 +33,7 @@ public class ComposeActivity extends AppCompatActivity {
     EditText etCompose;
     TextView tvCharacters;
     Button btnTweet;
-
+    ActivityComposeBinding binding;
     TwitterClient client;
 
     @Override
@@ -45,11 +46,13 @@ public class ComposeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_compose);
+        binding = ActivityComposeBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        etCompose = findViewById(R.id.etCompose);
-        tvCharacters= findViewById(R.id.tvCharacters);
-        btnTweet = findViewById(R.id.btnTweet);
+        etCompose = binding.etCompose;
+        tvCharacters= binding.tvCharacters;
+        btnTweet = binding.btnTweet;
         client  = TwitterApp.getRestClient(this);
 
         etCompose.setOnKeyListener(new View.OnKeyListener() {
@@ -97,7 +100,5 @@ public class ComposeActivity extends AppCompatActivity {
                 }, tweetContent);
             }
         });
-
-
     }
 }
