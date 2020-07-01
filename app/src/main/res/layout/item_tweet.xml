@@ -41,9 +41,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/tvScreenName"
+        android:layout_marginEnd="10dp"
         tools:text="2h" />
 
     <ImageView
@@ -66,37 +66,45 @@
 
         <ImageView
             android:id="@+id/ivReply"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginRight="40dp"
+            android:clickable="true"
             app:srcCompat="@drawable/reply" />
 
         <ImageView
             android:id="@+id/ivRetweet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginRight="5dp"
+            android:clickable="true"
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
             app:srcCompat="@drawable/ic_vector_retweet_stroke" />
 
         <TextView
             android:id="@+id/tvRetweetCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="40dp"
             android:text="100"
             tools:text="100" />
 
         <ImageView
             android:id="@+id/ivFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:focusableInTouchMode="true"
             app:srcCompat="@drawable/ic_vector_heart_stroke" />
 
         <TextView
             android:id="@+id/tvFavoriteCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="100"
             tools:text="100" />
 
@@ -113,5 +121,14 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="0dp"
         android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/tvScreenName"
+        tools:text="name" />
 
 </RelativeLayout>

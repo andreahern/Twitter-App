@@ -12,21 +12,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetDetailsActivity;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.json.JSONException;
 import org.parceler.Parcels;
 
 import java.util.List;
+
+import okhttp3.Headers;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     private static final String TAG = "TweetsAdapter";
     Context context;
     List<Tweet> tweets;
+    TwitterClient client;
+
 
     public TweetsAdapter(Context context, List<Tweet> tweets) {
         this.context = context;
@@ -37,6 +46,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_tweet, parent, false);
+        client = TwitterApp.getRestClient(context);
         return new ViewHolder(view);
     }
 
@@ -70,6 +80,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivReply;
         ImageView ivRetweet;
         ImageView ivFavorite;
+        TextView tvFavoriteCount;
+        TextView tvRetweetCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -81,37 +93,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivReply = itemView.findViewById(R.id.ivReply);
             ivRetweet = itemView.findViewById(R.id.ivRetweet);
             ivFavorite = itemView.findViewById(R.id.ivFavorite);
-
-            ivReply.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(context, "Reply CLicked!", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            ivRetweet.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(context, "Retweet CLicked!", Toast.LENGTH_SHORT).show();
-                    Glide.with(context).load(R.drawable.ic_vector_retweet).into(ivRetweet);
-                }
-            });
-
-            ivFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(context, "Favorite CLicked!", Toast.LENGTH_SHORT).show();
-                    Glide.with(context).load(R.drawable.ic_vector_heart).into(ivFavorite);
-                }
-            });
-
+            tvFavoriteCount = itemView.findViewById(R.id.tvFavoriteCount);
+            tvRetweetCount = itemView.findViewById(R.id.tvRetweetCount);
             itemView.setOnClickListener(this);
         }
 
-        public void bind(Tweet tweet) {
+        public void bind(final Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
             tvDate.setText(tweet.relativeDate);
+            tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
+            tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
             Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
 
             if (tweet.media != null) {
@@ -120,6 +112,116 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             } else {
                 ivMedia.setVisibility(View.GONE);
             }
+
+            ivReply.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
+
+            if (tweet.favorited) {
+                Glide.with(context).load(R.drawable.ic_vector_heart).into(ivFavorite);
+                ivFavorite.setColorFilter(ContextCompat.getColor(context, R.color.medium_red));
+            }
+            else {
+                Glide.with(context).load(R.drawable.ic_vector_heart_stroke).into(ivFavorite);
+                ivFavorite.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
+            }
+
+            if (tweet.retweeted) {
+                Glide.with(context).load(R.drawable.ic_vector_retweet).into(ivRetweet);
+                ivRetweet.setColorFilter(ContextCompat.getColor(context, R.color.medium_green));
+            }
+            else {
+                Glide.with(context).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
+                ivRetweet.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
+            }
+
+            ivRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!tweet.retweeted) {
+                        if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                            client.createRetweet(new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        tweet.retweeted = true;
+                                        tweet.retweetCount++;
+                                        notifyItemChanged(getAdapterPosition());
+                                        Glide.with(context).load(R.drawable.ic_vector_retweet).into(ivRetweet);
+                                        ivRetweet.setColorFilter(ContextCompat.getColor(context, R.color.medium_green));
+                                        Log.d(TAG, "onSuccess Create");
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                    Log.d(TAG, "onFailure Create");
+                                }
+                            }, tweet.id);
+                        }
+                    } else {
+                        if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                            client.destroyRetweet(new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                        tweet.retweeted = false;
+                                        tweet.retweetCount--;
+                                        notifyItemChanged(getAdapterPosition());
+                                        Glide.with(context).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
+                                        ivRetweet.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
+                                        Log.d(TAG, "onSuccess Destroy");
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                    Log.d(TAG, "onFailure Destroy");
+                                }
+                            }, tweet.id);
+                        }
+                    }
+                }
+            });
+
+            ivFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!tweet.favorited) {
+                        if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                            client.createFavorite(new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                    tweet.favorited = true;
+                                    tweet.favoriteCount++;
+                                    notifyItemChanged(getAdapterPosition());
+                                    Glide.with(context).load(R.drawable.ic_vector_heart).into(ivFavorite);
+                                    ivFavorite.setColorFilter(ContextCompat.getColor(context, R.color.medium_red));
+                                    Log.d(TAG, "onSuccess Create");
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                    Log.d(TAG, "onFailure Create");
+                                }
+                            }, tweet.id);
+                        }
+                    } else {
+                        if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                            client.destroyFavorite(new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                    tweet.favorited = false;
+                                    tweet.favoriteCount--;
+                                    notifyItemChanged(getAdapterPosition());
+                                    Glide.with(context).load(R.drawable.ic_vector_heart_stroke).into(ivFavorite);
+                                    ivFavorite.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
+                                    Log.d(TAG, "onSuccess Destroy");
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                    Log.d(TAG, "onFailure Destroy");
+                                }
+                            }, tweet.id);
+                        }
+                    }
+                }
+            });
         }
 
 

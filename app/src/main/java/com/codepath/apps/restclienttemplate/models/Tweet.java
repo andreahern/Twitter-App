@@ -25,6 +25,8 @@ public class Tweet {
     public long id;
     public boolean favorited;
     public boolean retweeted;
+    public int retweetCount;
+    public int favoriteCount;
 
     public User user;
 
@@ -37,6 +39,9 @@ public class Tweet {
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.favorited = jsonObject.getBoolean("favorited");
         tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
+
         if(jsonObject.has("extended_entities")){
             String type = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type");
             if(type.equals("photo")){
