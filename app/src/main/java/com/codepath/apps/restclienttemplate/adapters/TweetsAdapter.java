@@ -78,6 +78,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
+        TextView tvUsername;
         TextView tvDate;
         ImageView ivMedia;
         ImageView ivReply;
@@ -91,6 +92,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivProfileImage = binding.ivProfileImage;
             tvBody = binding.tvBody;
             tvScreenName = binding.tvScreenName;
+            tvUsername = binding.tvName;
             tvDate = binding.tvDate;
             ivMedia = binding.ivMedia;
             ivReply = binding.ivReply;
@@ -103,7 +105,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public void bind(final Tweet tweet) {
             tvBody.setText(tweet.body);
-            tvScreenName.setText(tweet.user.screenName);
+            tvScreenName.setText(tweet.user.name);
+            tvUsername.setText("@" + tweet.user.screenName);
             tvDate.setText(tweet.relativeDate);
             tvFavoriteCount.setText(Integer.toString(tweet.favoriteCount));
             tvRetweetCount.setText(Integer.toString(tweet.retweetCount));
