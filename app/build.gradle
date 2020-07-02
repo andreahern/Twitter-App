@@ -5,6 +5,11 @@ def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
+    repositories {
+        google()
+        jcenter()
+    }
+
     buildFeatures {
         viewBinding true
     }
