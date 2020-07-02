@@ -107,4 +107,21 @@ public class Tweet {
 
         return relativeDate;
     }
+
+    @Override
+    public String toString() {
+        return "Tweet{" +
+                "id=" + id +
+                ", body='" + body + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", relativeDate='" + relativeDate + '\'' +
+                ", media='" + media + '\'' +
+                ", favorited=" + favorited +
+                ", retweeted=" + retweeted +
+                ", retweetCount=" + retweetCount +
+                ", favoriteCount=" + favoriteCount +
+                ", userId=" + userId +
+                ", user=" + user +
+                '}';
+    }
 }
