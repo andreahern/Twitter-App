@@ -1,10 +1,13 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.LongDef;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTweetDetailsBinding;
+import com.codepath.apps.restclienttemplate.models.ReplyActivity;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -33,9 +37,12 @@ public class TweetDetailsActivity extends AppCompatActivity {
     ImageView ivProfileImage;
     TextView tvBody;
     TextView tvScreenName;
+    TextView tvName;
     ImageView ivMedia;
-    Button btnFavorite;
-    Button btnRetweet;
+    ImageView ivFavorite;
+    ImageView ivRetweet;
+    TextView tvFavoriteCount;
+    TextView tvRetweetCount;
     Tweet tweet;
     long id;
 
@@ -53,11 +60,18 @@ public class TweetDetailsActivity extends AppCompatActivity {
         ivProfileImage = binding.ivProfileImage;
         tvBody = binding.tvBody;
         tvScreenName = binding.tvScreenName;
+        tvName = binding.tvUserName;
         ivMedia = binding.ivMedia;
-        btnFavorite = binding.btnFavorite;
-        btnRetweet = binding.btnRetweet;
+        ivFavorite = binding.ivFavorite;
+        ivRetweet = binding.ivRetweet;
+        tvFavoriteCount = binding.tvFavoriteCount;
+        tvRetweetCount = binding.tvRetweetCount;
+
         id = getIntent().getLongExtra("id", 0);
         client = TwitterApp.getRestClient(this);
+
+        Glide.with(this).load(R.drawable.ic_vector_heart_stroke).into(ivFavorite);
+        Glide.with(this).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
 
         getTweetDetails();
     }
@@ -70,6 +84,14 @@ public class TweetDetailsActivity extends AppCompatActivity {
     }
 
     public void goHome(View view) {
+        finish();
+    }
+
+    public void handleReply(View view) {
+        Intent i = new Intent(this, ReplyActivity.class);
+        i.putExtra("id", tweet.id);
+        i.putExtra("username", tweet.user.screenName);
+        startActivity(i);
         finish();
     }
 
@@ -90,7 +112,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, "onSuccess onRetweet: " + json.toString());
                     tweet.retweeted = json.jsonObject.getBoolean("retweeted");
-                    btnRetweet.setText("Unretweet");
+                    Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_retweet).into(ivRetweet);
+                    ivRetweet.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.medium_green));
                 } catch (JSONException e) {
                     Log.e(TAG, "Json Exception: ", e);
                 }
@@ -110,7 +133,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, "onSuccess onUnRetweet: " + json.toString());
                     tweet.retweeted = json.jsonObject.getBoolean("retweeted");
-                    btnRetweet.setText("Retweet");
+                    Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
+                    ivRetweet.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.inline_action));
                 } catch (JSONException e) {
                     Log.e(TAG, "Json Exception: ", e);
                 }
@@ -130,7 +154,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, "onSuccess onFavorite: " + json.toString());
                     tweet.favorited = json.jsonObject.getBoolean("favorited");
-                    btnFavorite.setText("Unfavorite");
+                    Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_heart).into(ivFavorite);
+                    ivFavorite.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.medium_red));
                 } catch (JSONException e) {
                     Log.e(TAG, "Json Exception: ", e);
                 }
@@ -150,7 +175,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
                 try {
                     Log.i(TAG, "onSuccess onUnfavorite: " + json.toString());
                     tweet.favorited = json.jsonObject.getBoolean("favorited");
-                    btnFavorite.setText("Favorite");
+                    Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_heart_stroke).into(ivFavorite);
+                    ivFavorite.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.inline_action));
                 } catch (JSONException e) {
                     Log.e(TAG, "Json Exception: ", e);
                 }
@@ -167,12 +193,14 @@ public class TweetDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 try {
-                    Log.d(TAG, "onSuccess TweetDetails: " + json.jsonObject);
                     tweet = fromJson(json.jsonObject);
-                    tvScreenName.setText(tweet.user.screenName);
+                    Log.d(TAG, "onSuccess: " + tweet);
+                    tvScreenName.setText(tweet.user.name);
+                    tvName.setText("@" + tweet.user.screenName);
                     tvBody.setText(tweet.body);
-                    btnFavorite.setText(tweet.favorited ? "Unfavorite" : "Favorite");
-                    btnRetweet.setText(tweet.retweeted ? "UnRetweet" : "Retweet");
+                    tvFavoriteCount.setText("" + tweet.favoriteCount);
+                    tvRetweetCount.setText("" + tweet.retweetCount);
+
                     Glide.with(TweetDetailsActivity.this).load(tweet.user.profileImageUrl).into(ivProfileImage);
 
                     if (tweet.media != null) {
@@ -180,6 +208,22 @@ public class TweetDetailsActivity extends AppCompatActivity {
                         ivMedia.setVisibility(View.VISIBLE);
                     } else {
                         ivMedia.setVisibility(View.GONE);
+                    }
+
+                    if (tweet.favorited) {
+                        Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_heart).into(ivFavorite);
+                        ivFavorite.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.medium_red));
+                    } else {
+                        Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_heart_stroke).into(ivFavorite);
+                        ivFavorite.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.inline_action));
+                    }
+
+                    if (tweet.retweeted) {
+                        Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_retweet).into(ivRetweet);
+                        ivRetweet.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.medium_green));
+                    } else {
+                        Glide.with(TweetDetailsActivity.this).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
+                        ivRetweet.setColorFilter(ContextCompat.getColor(TweetDetailsActivity.this, R.color.inline_action));
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Json Exception: ", e);
@@ -202,6 +246,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tweet.retweeted = jsonObject.getBoolean("retweeted");
         tweet.id = jsonObject.getLong("id");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
 
         if (jsonObject.has("extended_entities")) {
             String type = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type");

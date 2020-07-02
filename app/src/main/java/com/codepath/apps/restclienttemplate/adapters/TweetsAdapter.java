@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TimelineActivity;
 import com.codepath.apps.restclienttemplate.TweetDetailsActivity;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
+import com.codepath.apps.restclienttemplate.models.ReplyActivity;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -138,6 +140,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 Glide.with(context).load(R.drawable.ic_vector_retweet_stroke).into(ivRetweet);
                 ivRetweet.setColorFilter(ContextCompat.getColor(context, R.color.inline_action));
             }
+
+            ivReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, ReplyActivity.class);
+                    i.putExtra("id", tweet.id);
+                    i.putExtra("username", tweet.user.screenName);
+                    ((TimelineActivity) context).startActivityForResult(i, 20);
+                }
+            });
 
             ivRetweet.setOnClickListener(new View.OnClickListener() {
                 @Override

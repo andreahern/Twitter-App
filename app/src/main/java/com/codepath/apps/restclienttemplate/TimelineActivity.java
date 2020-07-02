@@ -186,7 +186,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
             }
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.e(TAG, "onFailure! " + response, throwable);
+                 Log.e(TAG, "onFailure! " + response, throwable);
             }
         });
     }
@@ -198,5 +198,14 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         tweets.add(0, tweet);
         adapter.notifyItemInserted(0);
         rvTweets.smoothScrollToPosition(0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+        tweets.add(0, tweet);
+        adapter.notifyItemInserted(0);
+        rvTweets.smoothScrollToPosition(0);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
