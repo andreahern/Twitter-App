@@ -10,6 +10,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +44,7 @@ public class ComposeDialogFragment extends DialogFragment {
     TextView tvCharacters;
     Button btnTweet;
     TwitterClient client;
+    FragmentComposeBinding binding;
 
     public ComposeDialogFragment() {
         // Required empty public constructor
@@ -63,15 +66,17 @@ public class ComposeDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_compose, container, false);
+        binding = FragmentComposeBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        etCompose = view.findViewById(R.id.etCompose);
-        tvCharacters = view.findViewById(R.id.tvCharacters);
-        btnTweet = view.findViewById(R.id.btnTweet);
+        etCompose = binding.etCompose;
+        tvCharacters = binding.tvCharacters;
+        btnTweet = binding.btnTweet;
         client  = TwitterApp.getRestClient(getActivity());
 
         etCompose.setOnKeyListener(new View.OnKeyListener() {
@@ -82,6 +87,27 @@ public class ComposeDialogFragment extends DialogFragment {
                     tvCharacters.setTextColor(Color.RED);
                 }
                 return false;
+            }
+        });
+
+        etCompose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                int chars = MAX_TWEET_LENGTH - charSequence.length();
+                tvCharacters.setText(Integer.toString(chars));
+                if (chars < 0) tvCharacters.setTextColor(Color.RED);
+                else tvCharacters.setTextColor(Color.BLACK);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
 

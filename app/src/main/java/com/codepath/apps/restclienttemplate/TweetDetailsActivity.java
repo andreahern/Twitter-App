@@ -69,6 +69,10 @@ public class TweetDetailsActivity extends AppCompatActivity {
         return true;
     }
 
+    public void goHome(View view) {
+        finish();
+    }
+
     public void handleFavorite(View view) {
         if (tweet.favorited) onUnFavorite();
         else onFavorite();
