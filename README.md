@@ -43,13 +43,13 @@ The following **stretch** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
+![Demo](screenshots/Demo.gif
+)
+GIF created with [Kap](http://www.getkap.co/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+There were many times during this project where I felt like I was only implementing 80% of a feature and continuing do to lack of time. I believe given enough time I could implement the stretch features more thoroughly. 
 
 ## Open-source libraries used
 

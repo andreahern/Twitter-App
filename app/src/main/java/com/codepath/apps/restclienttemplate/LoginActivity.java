@@ -18,6 +18,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
 	SampleModelDao sampleModelDao;
 	ActivityLoginBinding binding;
+	Toolbar toolbar;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,7 +26,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 		View view = binding.getRoot();
 		setContentView(view);
 
-		Toolbar toolbar = (Toolbar) binding.toolbar;
+		toolbar = (Toolbar) binding.toolbar;
 		setSupportActionBar(toolbar);
 
 		final SampleModel sampleModel = new SampleModel();
@@ -64,4 +65,13 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 		getClient().connect();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.login, menu);
+		toolbar.setTitle("");
+
+		return super.onCreateOptionsMenu(menu);
+	}
 }
+
+
