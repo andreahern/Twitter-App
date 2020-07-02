@@ -35,7 +35,8 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        tools:text="This is my tweet" />
+        tools:text="This is my tweet"
+        android:autoLink="all"/>
 
     <TextView
         android:id="@+id/tvDate"
