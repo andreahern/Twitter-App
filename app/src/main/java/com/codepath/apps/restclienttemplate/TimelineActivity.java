@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +46,7 @@ public class TimelineActivity extends AppCompatActivity {
     EndlessRecyclerViewScrollListener scrollListener;
     ActivityTimelineBinding binding;
     TweetDao tweetDao;
+    Toolbar toolbar;
 
     private static final String TAG = "TimelineActivity";
     public static final int REQUEST_CODE = 20;
@@ -55,6 +57,10 @@ public class TimelineActivity extends AppCompatActivity {
         binding = ActivityTimelineBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+        toolbar =  binding.toolbar;
+        setSupportActionBar(toolbar);
+
 
         client = TwitterApp.getRestClient(this);
         tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
@@ -134,8 +140,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        ActionBar actionBar =  getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.twitter_blue)));
+        toolbar.setTitle("");
         return true;
     }
 

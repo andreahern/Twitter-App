@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -35,12 +36,13 @@ public class ComposeActivity extends AppCompatActivity {
     Button btnTweet;
     ActivityComposeBinding binding;
     TwitterClient client;
+    Toolbar toolbar;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        ActionBar actionBar =  getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.twitter_blue)));
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        toolbar.setTitle("");
+        return true;
     }
 
     @Override
@@ -50,6 +52,8 @@ public class ComposeActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
         etCompose = binding.etCompose;
         tvCharacters= binding.tvCharacters;
         btnTweet = binding.btnTweet;

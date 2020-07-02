@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.graphics.drawable.ColorDrawable;
@@ -39,6 +40,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
     long id;
 
     ActivityTweetDetailsBinding binding;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        toolbar = binding.toolbar;
         ivProfileImage = binding.ivProfileImage;
         tvBody = binding.tvBody;
         tvScreenName = binding.tvScreenName;
@@ -61,8 +64,8 @@ public class TweetDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.twitter_blue)));
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        toolbar.setTitle("");
         return true;
     }
 

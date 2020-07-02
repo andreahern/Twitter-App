@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.codepath.apps.restclienttemplate.databinding.ActivityLoginBinding;
 import com.codepath.apps.restclienttemplate.models.SampleModel;
 import com.codepath.apps.restclienttemplate.models.SampleModelDao;
@@ -23,6 +25,9 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 		View view = binding.getRoot();
 		setContentView(view);
 
+		Toolbar toolbar = (Toolbar) binding.toolbar;
+		setSupportActionBar(toolbar);
+
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");
 
@@ -34,14 +39,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 				sampleModelDao.insertModel(sampleModel);
 			}
 		});
-	}
-
-
-	// Inflate the menu; this adds items to the action bar if it is present.
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.login, menu);
-		return true;
 	}
 
 	// OAuth authenticated successfully, launch primary authenticated activity
